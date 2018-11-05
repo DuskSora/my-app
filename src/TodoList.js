@@ -5,14 +5,7 @@ import './index.css';
 import 'antd/dist/antd.css';
 import { Input, Button, List } from 'antd';
 import store from './store';
-
-const data = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
-  ];
+import { getInputChangeAction, getAddItemAction, getDeleteItemAction } from './store/actionCreator';
 
 class TodoList extends Component {
 
@@ -40,8 +33,8 @@ class TodoList extends Component {
                 <List size="small"
                       style={{width:'500px'}}
                       bordered
-                      dataSource={data}
-                      renderItem={item =>(<List.Item>{item}</List.Item>)} />
+                      dataSource={this.state.list}
+                      renderItem={(item, index) =>(<List.Item onClick={this.handleDeleteItem.bind(this, index)}>{item}</List.Item>)} />
             </Fragment>
         );
     }
@@ -61,13 +54,13 @@ class TodoList extends Component {
     }
 
     handleInputChange(e) {
-        const inputValue = e.target.value;
+        // const inputValue = e.target.value;
         // this.setState(() => ({inputValue}));
-        const action = {
-            type: 'change_input_value',
-            value: inputValue
-        };
-        store.dispatch(action);
+        // const action = {
+        //     type: CHANGE_INPUT_VALUE,
+        //     value: inputValue
+        // };
+        store.dispatch(getInputChangeAction(e.target.value));
     }
 
     handleBtnClick() {
@@ -75,17 +68,22 @@ class TodoList extends Component {
         //     inputValue: '',
         //     list: [...prevState.list, prevState.inputValue]
         // }));
-        const action = {
-            type: 'add_todo_item'
-        };
-        store.dispatch(action);
+        // const action = {
+        //     type: ADD_TODO_ITEM
+        // };
+        store.dispatch(getAddItemAction());
     }
 
     handleDeleteItem(index) {
-        this.setState((prevState) => {
-            prevState.list.splice(index, 1);
-            return {list: prevState.list};
-        });
+        // this.setState((prevState) => {
+        //     prevState.list.splice(index, 1);
+        //     return {list: prevState.list};
+        // });
+        // const action = {
+        //     type: DELETE_TODO_ITEM,
+        //     value: index
+        // };
+        store.dispatch(getDeleteItemAction());
     }
 
     handleStoreChanged() {
