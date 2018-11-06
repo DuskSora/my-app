@@ -1,11 +1,9 @@
-import React, { Component,Fragment } from 'react';
+import React, { Component } from 'react';
 import TodoItem from './TodoItem';
-import axios from 'axios';
+import TodoListUI from './TodoListUI';
 import './index.css';
-import 'antd/dist/antd.css';
-import { Input, Button, List } from 'antd';
 import store from './store';
-import { getInputChangeAction, getAddItemAction, getDeleteItemAction } from './store/actionCreator';
+import { getInputChangeAction, getAddItemAction, getDeleteItemAction, initListAction, getTodoList, getInitList } from './store/actionCreator';
 
 class TodoList extends Component {
 
@@ -16,39 +14,29 @@ class TodoList extends Component {
         this.handleBtnClick = this.handleBtnClick.bind(this);
         this.handleDeleteItem = this.handleDeleteItem.bind(this);
         this.handleStoreChanged = this.handleStoreChanged.bind(this);
+        this.initListData = this.initListData.bind(this);
         store.subscribe(this.handleStoreChanged);
     }
 
     render() {
         return (
-            <Fragment>
-                <div style={{marginTop:'10px',marginLeft:'10px'}}>
-                    <label htmlFor="insertArea">输入内容</label>
-                    <Input placeholder="text" style={{width:'20%'}} id="insertArea" className="test" value={this.state.inputValue} onChange={this.handleInputChange}></Input>
-                    <Button type="primary" onClick={this.handleBtnClick}>提交</Button>
-                </div>
-                <ul>
-                    {this.getListItem()}
-                </ul>
-                <List size="small"
-                      style={{width:'500px'}}
-                      bordered
-                      dataSource={this.state.list}
-                      renderItem={(item, index) =>(<List.Item onClick={this.handleDeleteItem.bind(this, index)}>{item}</List.Item>)} />
-            </Fragment>
+            <TodoListUI 
+            inputValue={this.state.inputValue}
+            list={this.state.list}
+            handleInputChange={this.handleInputChange}
+            handleBtnClick={this.handleBtnClick}
+            handleDeleteItem={this.handleDeleteItem}
+            getListItem={this.getListItem}/>
         );
     }
 
     componentDidMount() {
-        axios.get('../api/todoList.json').then((data) => {
-
-        }).catch(() => {
-
-        });
+        // store.dispatch(getTodoList());
+        store.dispatch(getInitList());
     }
 
-    getListItem() {
-        return  this.state.list.map((item, index) => {
+    getListItem(list) {
+        return  list.map((item, index) => {
             return <TodoItem key={index} content={item} index={index} handleDeleteItem={this.handleDeleteItem}/>;
         });
     }
@@ -88,6 +76,10 @@ class TodoList extends Component {
 
     handleStoreChanged() {
         this.setState(store.getState());
+    }
+
+    initListData(data) {
+        store.dispatch(initListAction(data));
     }
 }
 
